@@ -397,6 +397,10 @@ class MRGLog(MRGLogger):
             self.__init_log()
 
     @property
+    def log_lvl(self):
+      return self.__log_lvl
+
+    @property
     def tcms_tests(self):
         if isinstance(self.parent, MRGLog):
             return self.parent.__tcms_tests
@@ -424,9 +428,6 @@ class MRGLog(MRGLogger):
             if len(logdir) > 0:
                 # logdir parameter specified, use it
                 tmp_logdir = logdir
-            elif os.environ.get('BEAKERLIB_DIR', None):
-                # BEAKERLIB_DIR defined and not empty, use it
-                tmp_logdir = os.environ['BEAKERLIB_DIR']
             else:
                 tmp_logdir = os.path.join('logs')
             try:
@@ -476,9 +477,9 @@ class MRGLog(MRGLogger):
 
     def __init_log(self):
         """ log header """
-        if self.__log_lvl < 1:
+        if self.log_lvl < 1:
             self.log(LOG_LEVEL, str(self.name), extra={'tag': 'test_id'})
-        if self.__log_lvl < 2:
+        if self.log_lvl < 2:
             self.log(LOG_LEVEL, str(self.__package), extra={'tag': 'package'})
             self.test_results["inittime"] = datetime.now()
             self.log(LOG_LEVEL,
@@ -512,7 +513,7 @@ class MRGLog(MRGLogger):
 
     def __end_log(self):
         """ log ending """
-        if self.__log_lvl < 1:
+        if self.log_lvl < 1:
             self.log(LOG_LEVEL, ':' * LINE_LENGTH, noxml=True)
             endtime = datetime.now()
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
@@ -535,7 +536,7 @@ class MRGLog(MRGLogger):
                     len(self.tcms_tests[testid]['fail']),
                     self.tcms_tests[testid]['desc'],
                     noxml=True)
-        if self.__log_lvl < 2:
+        if self.log_lvl < 2:
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
             self.log(LOG_LEVEL, 'List of known issues:', noxml=True)
             self.log(LOG_LEVEL, '-' * LINE_LENGTH, noxml=True)
@@ -544,7 +545,7 @@ class MRGLog(MRGLogger):
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
 
-        if self.__log_lvl < 1:
+        if self.log_lvl < 1:
             if self.test_results["errors"] != 0:
                 _result = "ERROR"
             elif self.test_results["fails"] != 0:
@@ -602,7 +603,7 @@ class MRGLog(MRGLogger):
                     noxml=True)
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
-        if self.__log_lvl < 1:
+        if self.log_lvl < 1:
             self.log(LOG_LEVEL, datetime.strftime(endtime, TIME_FORMAT_MS),
                 extra={'tag': 'endtime'})
             self.log(LOG_LEVEL, '', extra={'tag': 'log', 'starttag': False})
@@ -772,7 +773,7 @@ class MRGLog(MRGLogger):
             # already running TCMS
             self.closeTCMS()
         if stat:
-            if self.__log_lvl < 1:
+            if self.log_lvl < 2:
                 self.log(LOG_LEVEL,
                   ':' * LINE_LENGTH,
                   noxml=True)
@@ -797,7 +798,7 @@ class MRGLog(MRGLogger):
         """
         if self.act_test["id"] != None:
             if stat:
-                if self.__log_lvl < 1:
+                if self.log_lvl < 1:
                     self.log(LOG_LEVEL, 'Test %s duration  : %ds',
                         str(self.act_test["id"]),
                         (datetime.now() - self.act_test["init_time"]).seconds,
@@ -820,7 +821,7 @@ class MRGLog(MRGLogger):
             self.tcms_tests[self.act_test["id"]]['desc'] = self.act_test["desc"]
 
             if stat:
-                if self.__log_lvl < 1:
+                if self.log_lvl < 1:
                     self.log(LOG_LEVEL,
                       ':' * LINE_LENGTH,
                       noxml=True)
@@ -847,7 +848,7 @@ class MRGLog(MRGLogger):
         else:
             self.tcms_tests[testid] = {'result': result, 'pass': [], 'fail': [],
                                        'waived': [], 'errors': [], 'desc': ''}
-        if self.__log_lvl < 1:
+        if self.log_lvl < 1:
             self.log(LOG_LEVEL, testid,
               extra={'tag': 'testid', 'attrs': {'result': str(result).upper()}})
 
