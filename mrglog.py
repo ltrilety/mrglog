@@ -737,8 +737,13 @@ class MRGLog(MRGLogger):
         MRGLogger.failed(self, message, *args, **kwargs)
 
     def waived(self, message, *args, **kwargs):
-        """ log waive """
+        """ log waive
+        there could be special parameter issue with the name of the issue
+        """
         self.__increase_counters(3, message)
+        if 'issue' in kwargs and kwargs['issue']:
+            self.add_issue(kwargs['issue'])
+            del(kwargs['issue'])
         MRGLogger.waived(self, message, *args, **kwargs)
 
     def error(self, message, *args, **kwargs):
