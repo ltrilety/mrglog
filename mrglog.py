@@ -1,4 +1,4 @@
-# vim: colorcolumn=120:
+# vim: colorcolumn=80:
 
 """ Log API """
 
@@ -40,19 +40,19 @@ logging.addLevelName(WAIVE_LEVEL, 'WAIVE')
 def passed(self, message, *args, **kws):
     """ log pass """
     # Yes, logger takes its '*args' as 'args'.
-    self._log(PASS_LEVEL, message, args, **kws) # pylint: disable=W0212
+    self._log(PASS_LEVEL, message, args, **kws)  # pylint: disable=W0212
 logging.Logger.passed = passed
 
 
 def failed(self, message, *args, **kws):
     """ log fail """
-    self._log(FAIL_LEVEL, message, args, **kws) # pylint: disable=W0212
+    self._log(FAIL_LEVEL, message, args, **kws)  # pylint: disable=W0212
 logging.Logger.failed = failed
 
 
 def waived(self, message, *args, **kws):
     """ log waive """
-    self._log(WAIVE_LEVEL, message, args, **kws) # pylint: disable=W0212
+    self._log(WAIVE_LEVEL, message, args, **kws)  # pylint: disable=W0212
 logging.Logger.waived = waived
 
 
@@ -117,7 +117,7 @@ class ColorFormatter(logging.Formatter):
         """
         color_seq = COLOR_SEQ % (30 + color)
         text = color_seq + text
-        #text = BOLD_SEQ + text
+        # text = BOLD_SEQ + text
         text = text + RESET_SEQ
         return text
 
@@ -167,7 +167,8 @@ class XmlHandler(logging.FileHandler):
             attr_str = ''
             if hasattr(record, 'attrs'):
                 for attr_name in record.attrs:
-                    attr_str += ' %s=%s' % (attr_name,
+                    attr_str += ' %s=%s' % (
+                        attr_name,
                         xml.sax.saxutils.quoteattr(record.attrs[attr_name]))
             if hasattr(record, 'starttag'):
                 if record.starttag:
@@ -175,23 +176,24 @@ class XmlHandler(logging.FileHandler):
                 else:
                     self.stream.write('</%s>\n' % record.tag)
             else:
-                self.stream.write('<%s%s>%s</%s>\n' %\
-                    (record.tag,
+                self.stream.write('<%s%s>%s</%s>\n' % (
+                    record.tag,
                     attr_str,
                     xml.sax.saxutils.escape(record.message),
                     record.tag))
         else:
             if record.levelname == 'PASS' or record.levelname == 'FAIL':
                 # assert, or result of test
-                self.stream.write('<test message=%s>%s</test>\n' %\
-                    (xml.sax.saxutils.quoteattr(record.message),
+                self.stream.write('<test message=%s>%s</test>\n' % (
+                    xml.sax.saxutils.quoteattr(record.message),
                     xml.sax.saxutils.escape(record.levelname)))
             else:
                 # typical message
                 self.stream.write(
                     '<message severity=%s timestamp=%s>%s</message>\n' % (
                         xml.sax.saxutils.quoteattr(record.levelname),
-                        xml.sax.saxutils.quoteattr(datetime.strftime(datetime.now(), TIME_FORMAT_MS)),
+                        xml.sax.saxutils.quoteattr(datetime.strftime(
+                            datetime.now(), TIME_FORMAT_MS)),
                         xml.sax.saxutils.escape(formatted_message),
                         )
                     )
@@ -233,7 +235,7 @@ class MRGLogger(logging.Logger, object):
             # put format back
             for handler in self.usm_handlers:
                 if not isinstance(handler, XmlHandler) and \
-                    not isinstance(handler, logging.FileHandler):
+                   not isinstance(handler, logging.FileHandler):
                     handler.setFormatter(STD_FORMATTER)
 
     def log(self, lvl, msg, *args, **kwargs):
@@ -276,10 +278,11 @@ class MRGLogger(logging.Logger, object):
                         'endtime':    'Test finished:',
                     }
                     if extra['tag'] in prints_subst:
-                        std_format = STD_FORMAT.replace(STD_VARIABLE,
-                            ' %s' % prints_subst[extra['tag']])
+                        std_format = STD_FORMAT.replace(
+                            STD_VARIABLE, ' %s' % prints_subst[extra['tag']])
                     elif extra['tag'] == 'testid':
-                        std_format = STD_FORMAT.replace(STD_VARIABLE, ' Test') + \
+                        std_format = \
+                            STD_FORMAT.replace(STD_VARIABLE, ' Test') + \
                             ' result    : %s' % extra['attrs']['result']
                     else:
                         std_format = STD_FORMAT.replace(STD_VARIABLE, "")
@@ -387,10 +390,11 @@ class MRGLog(MRGLogger):
             }
 
         if debug or output == ['std']:
-            self.__initialize_handlers(None, debug=debug,
-                handlers=handlers, output=output)
+            self.__initialize_handlers(
+                None, debug=debug, handlers=handlers, output=output)
         else:
-            self.__initialize_handlers(self.__get_log_dir(logdir, testid),
+            self.__initialize_handlers(
+                self.__get_log_dir(logdir, testid),
                 debug=False, handlers=handlers, output=output)
 
         if not self.__module:
@@ -398,7 +402,7 @@ class MRGLog(MRGLogger):
 
     @property
     def log_lvl(self):
-      return self.__log_lvl
+        return self.__log_lvl
 
     @property
     def tcms_tests(self):
@@ -472,8 +476,8 @@ class MRGLog(MRGLogger):
                     # add correct handler for printing to stdout
                     self.setStdHandler(self.handlers_level)
             except Exception as error:
-                raise MRGLoggerException("Log:: Log init error: %s " % \
-                    (str(error)))
+                raise MRGLoggerException(
+                    "Log:: Log init error: %s " % (str(error)))
 
     def __init_log(self):
         """ log header """
@@ -482,22 +486,25 @@ class MRGLog(MRGLogger):
         if self.log_lvl < 2:
             self.log(LOG_LEVEL, str(self.__package), extra={'tag': 'package'})
             self.test_results["inittime"] = datetime.now()
-            self.log(LOG_LEVEL,
-                datetime.strftime(self.test_results["inittime"],
-                TIME_FORMAT_MS), extra={'tag': 'starttime'})
-            self.log(LOG_LEVEL, str(socket.getfqdn()),
-                extra={'tag': 'hostname'})
+            self.log(
+                LOG_LEVEL, datetime.strftime(
+                    self.test_results["inittime"], TIME_FORMAT_MS),
+                extra={'tag': 'starttime'})
+            self.log(
+                LOG_LEVEL, str(socket.getfqdn()), extra={'tag': 'hostname'})
             if IS_LINUX:
-                self.log(LOG_LEVEL, str(os.uname()[-1]),
-                    extra={'tag': 'arch'})
-                self.log(LOG_LEVEL,
+                self.log(
+                    LOG_LEVEL, str(os.uname()[-1]), extra={'tag': 'arch'})
+                self.log(
+                    LOG_LEVEL,
                     str(open("/etc/redhat-release", 'r').read().strip()),
                     extra={'tag': 'release'})
             else:
                 self.log(LOG_LEVEL, '', extra={'tag': 'arch'})
                 # no error
-                self.log(LOG_LEVEL, str(sys.getwindowsversion()),
-                    extra={'tag': 'release'}) # pylint: disable=E1101
+                self.log(
+                    LOG_LEVEL, str(sys.getwindowsversion()),
+                    extra={'tag': 'release'})  # pylint: disable=E1101
                 # error
 
             self.log(LOG_LEVEL, '', extra={'tag': 'log', 'starttag': True})
@@ -519,20 +526,23 @@ class MRGLog(MRGLogger):
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
             # print all tcms test with results (PASS|FAIL)
-            self.log(LOG_LEVEL, "Test-case[s] Summary: (%i found)",
+            self.log(
+                LOG_LEVEL, "Test-case[s] Summary: (%i found)",
                 len(self.tcms_tests), noxml=True)
             self.log(LOG_LEVEL, '-' * LINE_LENGTH, noxml=True)
             _tcs_summary = {'PASS': 0, 'FAIL': 0, 'ERROR': 0}
             for testid in self.tcms_tests.keys():
                 _tcs_summary[self.tcms_tests[testid]['result']] += 1
-                self.log(LOG_LEVEL,
-                    ColorFormatter.format_color('%s %-40s:  #tests:%-4d  #fails:%-4d  desc.:"%s"',
+                self.log(
+                    LOG_LEVEL,
+                    ColorFormatter.format_color(
+                        '%s %-40s:  #tests:%-4d  #fails:%-4d  desc.:"%s"',
                         COLORS[self.tcms_tests[testid]['result']]),
                     self.tcms_tests[testid]['result'],
                     str(testid),
-                    len(self.tcms_tests[testid]['pass']) + \
-                      len(self.tcms_tests[testid]['fail']) + \
-                      len(self.tcms_tests[testid]['waived']),
+                    len(self.tcms_tests[testid]['pass']) +
+                    len(self.tcms_tests[testid]['fail']) +
+                    len(self.tcms_tests[testid]['waived']),
                     len(self.tcms_tests[testid]['fail']),
                     self.tcms_tests[testid]['desc'],
                     noxml=True)
@@ -552,62 +562,77 @@ class MRGLog(MRGLogger):
                 _result = "FAIL"
             else:
                 _result = "PASS"
-            self.log(LOG_LEVEL,
-                ColorFormatter.format_bold("Test-Cases Summary") + \
+            self.log(
+                LOG_LEVEL,
+                ColorFormatter.format_bold("Test-Cases Summary") +
                 "   #TOTAL: %s #PASSED: %s #FAILED: %s #ERRORS: %s",
                 ColorFormatter.format_bold("%-5s" % (len(self.tcms_tests))),
-                ColorFormatter.format_color("%-5s" % (_tcs_summary['PASS']),
-                    COLORS['PASS']),
-                ColorFormatter.format_color("%-5s" % (_tcs_summary['FAIL']),
-                    COLORS[_result]),
-                ColorFormatter.format_color("%s" % (_tcs_summary['ERROR']),
-                    COLORS[_result]),
+                ColorFormatter.format_color("%-5s" % (
+                    _tcs_summary['PASS']), COLORS['PASS']),
+                ColorFormatter.format_color("%-5s" % (
+                    _tcs_summary['FAIL']), COLORS[_result]),
+                ColorFormatter.format_color("%s" % (
+                    _tcs_summary['ERROR']), COLORS[_result]),
                 noxml=True)
-            self.log(LOG_LEVEL,
-                ColorFormatter.format_bold("Test Summary") + \
-                " : %s #TOTAl: %s #PASSED: %s #FAILED: %s #ERRORS: %s #WAIVES: %s",
+            self.log(
+                LOG_LEVEL,
+                ColorFormatter.format_bold("Test Summary") +
+                " : %s #TOTAl: %s #PASSED: %s #FAILED: %s"
+                " #ERRORS: %s #WAIVES: %s",
                 ColorFormatter.format_color("%-5s" % _result, COLORS[_result]),
-                ColorFormatter.format_bold("%-5s" % (len(self.test_results["fails"]) + \
-                                                     len(self.test_results["pass"]) + \
-                                                     len(self.test_results["waives"]))),
-                ColorFormatter.format_color("%-5s" % (len(self.test_results["pass"])),
+                ColorFormatter.format_bold("%-5s" % (
+                    len(self.test_results["fails"]) +
+                    len(self.test_results["pass"]) +
+                    len(self.test_results["waives"]))),
+                ColorFormatter.format_color(
+                    "%-5s" % (len(self.test_results["pass"])),
                     COLORS['PASS']),
-                ColorFormatter.format_color("%-5s" % (len(self.test_results["fails"])),
+                ColorFormatter.format_color(
+                    "%-5s" % (len(self.test_results["fails"])),
                     COLORS[_result]),
-                ColorFormatter.format_color("%-3s" % (len(self.test_results["errors"])),
+                ColorFormatter.format_color(
+                    "%-3s" % (len(self.test_results["errors"])),
                     COLORS[_result]),
-                ColorFormatter.format_bold("%s" % (len(self.test_results["waives"]))),
+                ColorFormatter.format_bold(
+                    "%s" % (len(self.test_results["waives"]))),
                 noxml=True)
             if IS_LINUX:
                 try:
-                    self.log(LOG_LEVEL, 'Test name    : %s',
+                    self.log(
+                        LOG_LEVEL, 'Test name    : %s',
                         os.sep.join(os.getcwd().split(os.sep)[-4:]),
                         noxml=True)
                 except Exception:
-                    self.log(LOG_LEVEL, 'Test name    : %s',
+                    self.log(
+                        LOG_LEVEL, 'Test name    : %s',
                         self.name, noxml=True)
             else:
                 self.log(LOG_LEVEL, 'Test name    : %s', self.name, noxml=True)
-            self.log(LOG_LEVEL, 'Duration     : %s',
+            self.log(
+                LOG_LEVEL, 'Duration     : %s',
                 str(endtime - self.test_results["inittime"]), noxml=True)
             if IS_LINUX:
-                self.log(LOG_LEVEL,
+                self.log(
+                    LOG_LEVEL,
                     'Test on      : %s %s',
                     open("/etc/redhat-release", 'r').read().strip(),
                     str(os.uname()[-1]),
                     noxml=True)
             else:
-                self.log(LOG_LEVEL,
+                self.log(
+                    LOG_LEVEL,
                     'Test MRG pkgs : <no-repository> on Windows(%s)',
-                    str(sys.getwindowsversion()), # pylint: disable=E1101
+                    str(sys.getwindowsversion()),  # pylint: disable=E1101
                     noxml=True)
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
         if self.log_lvl < 1:
-            self.log(LOG_LEVEL, datetime.strftime(endtime, TIME_FORMAT_MS),
+            self.log(
+                LOG_LEVEL, datetime.strftime(endtime, TIME_FORMAT_MS),
                 extra={'tag': 'endtime'})
             self.log(LOG_LEVEL, '', extra={'tag': 'log', 'starttag': False})
-            self.__csv_result_file(len(self.tcms_tests),
+            self.__csv_result_file(
+                len(self.tcms_tests),
                 _tcs_summary['PASS'],
                 _tcs_summary['FAIL'],
                 _tcs_summary['ERROR'])
@@ -616,7 +641,8 @@ class MRGLog(MRGLogger):
         """
         Create CSV result file for graph in jenkins
         """
-        csv_result_file = os.path.join(self.__get_log_dir(logdir='', testid=''),
+        csv_result_file = os.path.join(
+            self.__get_log_dir(logdir='', testid=''),
             'testresult.csv')
         with open(csv_result_file, 'w') as csvfile:
             csv_result_writer = csv.writer(csvfile)
@@ -665,7 +691,7 @@ class MRGLog(MRGLogger):
         """ log a message """
         if isinstance(priority, str):
             # no error
-            if not priority.strip(): # pylint: disable=E1103
+            if not priority.strip():  # pylint: disable=E1103
                 # error
                 severities = {"DEBUG": logging.DEBUG,
                               "INFO": logging.INFO,
@@ -760,7 +786,8 @@ class MRGLog(MRGLogger):
 
     def getTestState(self):
         """ getTestState """
-        self.debug('rlGetTestState: %s failed and %s waived assert(s) in test',
+        self.debug(
+            'rlGetTestState: %s failed and %s waived assert(s) in test',
             str(self.test_results["fails"]),
             str(self.test_results["waives"]))
         return self.test_results["fails"]
@@ -779,9 +806,7 @@ class MRGLog(MRGLogger):
             self.closeTCMS()
         if stat:
             if self.log_lvl < 2:
-                self.log(LOG_LEVEL,
-                  ':' * LINE_LENGTH,
-                  noxml=True)
+                self.log(LOG_LEVEL, ':' * LINE_LENGTH, noxml=True)
                 self.log(LOG_LEVEL, 'Test %s started', str(testid), noxml=True)
         self.act_test["id"] = testid
         self.act_test["desc"] = ''
@@ -804,11 +829,13 @@ class MRGLog(MRGLogger):
         if self.act_test["id"] != None:
             if stat:
                 if self.log_lvl < 1:
-                    self.log(LOG_LEVEL, 'Test %s duration  : %ds',
+                    self.log(
+                        LOG_LEVEL, 'Test %s duration  : %ds',
                         str(self.act_test["id"]),
                         (datetime.now() - self.act_test["init_time"]).seconds,
                         noxml=True)
-                    self.log(LOG_LEVEL, 'Test %s assertions: %d good, %d bad',
+                    self.log(
+                        LOG_LEVEL, 'Test %s assertions: %d good, %d bad',
                         str(self.act_test["id"]),
                         len(self.act_test["pass"]), len(self.act_test["fail"]),
                         noxml=True)
@@ -820,16 +847,18 @@ class MRGLog(MRGLogger):
             else:
                 self.addTestId(result='FAIL')
 
-            self.tcms_tests[self.act_test["id"]]['pass'] = self.act_test["pass"]
-            self.tcms_tests[self.act_test["id"]]['fail'] = self.act_test["fail"]
-            self.tcms_tests[self.act_test["id"]]['errors'] = self.act_test["errors"]
-            self.tcms_tests[self.act_test["id"]]['desc'] = self.act_test["desc"]
+            self.tcms_tests[self.act_test["id"]]['pass'] = \
+                self.act_test["pass"]
+            self.tcms_tests[self.act_test["id"]]['fail'] = \
+                self.act_test["fail"]
+            self.tcms_tests[self.act_test["id"]]['errors'] = \
+                self.act_test["errors"]
+            self.tcms_tests[self.act_test["id"]]['desc'] = \
+                self.act_test["desc"]
 
             if stat:
                 if self.log_lvl < 1:
-                    self.log(LOG_LEVEL,
-                      ':' * LINE_LENGTH,
-                      noxml=True)
+                    self.log(LOG_LEVEL, ':' * LINE_LENGTH, noxml=True)
 
             self.act_test["id"] = None
             self.act_test["desc"] = ''
@@ -847,15 +876,18 @@ class MRGLog(MRGLogger):
         if testid in self.tcms_tests:
             if result == "ERROR":
                 self.tcms_tests[testid]['result'] = result
-            elif result == "FAIL" and \
-                self.tcms_tests[testid]['result'] != "ERROR":
+            elif (result == "FAIL" and
+                  self.tcms_tests[testid]['result'] != "ERROR"):
                 self.tcms_tests[testid]['result'] = result
         else:
-            self.tcms_tests[testid] = {'result': result, 'pass': [], 'fail': [],
-                                       'waived': [], 'errors': [], 'desc': ''}
+            self.tcms_tests[testid] = {
+                'result': result, 'pass': [], 'fail': [],
+                'waived': [], 'errors': [], 'desc': ''}
         if self.log_lvl < 1:
-            self.log(LOG_LEVEL, testid,
-              extra={'tag': 'testid', 'attrs': {'result': str(result).upper()}})
+            self.log(
+                LOG_LEVEL, testid,
+                extra={
+                    'tag': 'testid', 'attrs': {'result': str(result).upper()}})
 
     @property
     def fails(self):
@@ -909,11 +941,13 @@ class USMLog(object):
             # there is already logger initialized,
             # it is module use logger handlers
             if handlers:
-                raise USMLogException("Handlers already initialized, don't use others")
+                raise USMLogException("Handlers already initialized,"
+                                      " don't use others")
             if not name:
                 name = cls.__name__
-            if not name in USMLog.__module_loggers:
-                USMLog.__module_loggers[name] = MRGLog(testid=name,
+            if name not in USMLog.__module_loggers:
+                USMLog.__module_loggers[name] = MRGLog(
+                    testid=name,
                     logdir=logdir,
                     debug=debug,
                     handlers=handlers,
@@ -927,7 +961,8 @@ class USMLog(object):
             return USMLog.__module_loggers[name]
         else:
             if module:
-                logger = MRGLog(testid=name,
+                logger = MRGLog(
+                    testid=name,
                     logdir=logdir,
                     debug=True,
                     handlers=handlers,
@@ -936,9 +971,11 @@ class USMLog(object):
                     level=level,
                     verbose_lvl=verbose_lvl,
                     )
-                logger.warning('for test there should be some main logger (not module)')
+                logger.warning('for test there should be some main logger'
+                               ' (not module)')
             else:
-                logger = MRGLog(testid=name,
+                logger = MRGLog(
+                    testid=name,
                     logdir=logdir,
                     debug=debug,
                     handlers=handlers,
@@ -953,16 +990,17 @@ class USMLog(object):
 
     @classmethod
     def get_module_logger(cls,
-        name='',
-        logdir='',
-        debug=False,
-        handlers=None,
-        output=None,
-        level=logging.INFO,
-        verbose_lvl=0,
-        ):
+                          name='',
+                          logdir='',
+                          debug=False,
+                          handlers=None,
+                          output=None,
+                          level=logging.INFO,
+                          verbose_lvl=0,
+                          ):
         """ get logger for module, for api not for the test itself """
-        return cls.get_logger(name=name,
+        return cls.get_logger(
+            name=name,
             logdir=logdir,
             module=True,
             debug=debug,
@@ -992,7 +1030,7 @@ class USMLog(object):
         if USMLog.__logger:
             USMLog.__logger.disabled = True
         else:
-            main_logger = Log('main logger', no_log=True)
+            main_logger = MRGLog('main logger', no_log=True)
             USMLog.set_logger(main_logger)
         for module_logger in USMLog.__module_loggers:
             USMLog.__module_loggers[module_logger].disabled = True
