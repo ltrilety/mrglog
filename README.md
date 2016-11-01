@@ -1,2 +1,0 @@
-# mrglog
-'MRG' logger module
