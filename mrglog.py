@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 # vim: colorcolumn=80:
 
 """ Log API """
