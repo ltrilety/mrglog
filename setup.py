@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='mrglog',
-    version='0.1.0dev1',
+    version='0.1.1',
     author='Luboš Tříletý',
     author_email='ltrilety@redhat.com',
     license='Apache 2.0',
