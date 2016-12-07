@@ -571,9 +571,9 @@ class MRGLog(MRGLogger):
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
 
         if self.log_lvl < 1:
-            if self.test_results["errors"] != 0:
+            if self.errors != 0:
                 _result = "ERROR"
-            elif self.test_results["fails"] != 0:
+            elif self.fails != 0:
                 _result = "FAIL"
             else:
                 _result = "PASS"
