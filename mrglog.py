@@ -597,10 +597,10 @@ class MRGLog(MRGLogger):
                 ColorFormatter.format_color("%-5s" % _result, COLORS[_result]),
                 ColorFormatter.format_bold("%-5s" % (
                     self.fails +
-                    self.pass_ +
+                    self.passes +
                     self.waives)),
                 ColorFormatter.format_color(
-                    "%-5s" % (self.pass_),
+                    "%-5s" % (self.passes),
                     COLORS['PASS']),
                 ColorFormatter.format_color(
                     "%-5s" % (self.fails),
@@ -905,7 +905,7 @@ class MRGLog(MRGLogger):
                     'tag': 'testid', 'attrs': {'result': str(result).upper()}})
 
     @property
-    def pass_(self):
+    def passes(self):
         """ getter for number of pass """
         return len(self.test_results["pass"])
 
