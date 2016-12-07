@@ -571,9 +571,9 @@ class MRGLog(MRGLogger):
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
 
         if self.log_lvl < 1:
-            if self.test_results["errors"] != 0:
+            if self.errors != 0:
                 _result = "ERROR"
-            elif self.test_results["fails"] != 0:
+            elif self.fails != 0:
                 _result = "FAIL"
             else:
                 _result = "PASS"
@@ -596,20 +596,20 @@ class MRGLog(MRGLogger):
                 " #ERRORS: %s #WAIVES: %s",
                 ColorFormatter.format_color("%-5s" % _result, COLORS[_result]),
                 ColorFormatter.format_bold("%-5s" % (
-                    len(self.test_results["fails"]) +
-                    len(self.test_results["pass"]) +
-                    len(self.test_results["waives"]))),
+                    self.fails +
+                    self.passes +
+                    self.waives)),
                 ColorFormatter.format_color(
-                    "%-5s" % (len(self.test_results["pass"])),
+                    "%-5s" % (self.passes),
                     COLORS['PASS']),
                 ColorFormatter.format_color(
-                    "%-5s" % (len(self.test_results["fails"])),
+                    "%-5s" % (self.fails),
                     COLORS[_result]),
                 ColorFormatter.format_color(
-                    "%-3s" % (len(self.test_results["errors"])),
+                    "%-3s" % (self.errors),
                     COLORS[_result]),
                 ColorFormatter.format_bold(
-                    "%s" % (len(self.test_results["waives"]))),
+                    "%s" % (self.waives)),
                 noxml=True)
             if IS_LINUX:
                 try:
@@ -905,6 +905,11 @@ class MRGLog(MRGLogger):
                     'tag': 'testid', 'attrs': {'result': str(result).upper()}})
 
     @property
+    def passes(self):
+        """ getter for number of pass """
+        return len(self.test_results["pass"])
+
+    @property
     def fails(self):
         """ getter for number of fails """
         return len(self.test_results["fails"])
@@ -913,6 +918,11 @@ class MRGLog(MRGLogger):
     def errors(self):
         """ getter for number of errors"""
         return len(self.test_results["errors"])
+
+    @property
+    def waives(self):
+        """ getter for number of waives"""
+        return len(self.test_results["waives"])
 
     def rlFailsNumber(self):
         """ return number of fails """
