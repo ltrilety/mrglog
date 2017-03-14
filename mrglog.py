@@ -22,6 +22,7 @@
 
 import csv
 import os
+import re
 from datetime import datetime
 import sys
 import socket
@@ -248,6 +249,8 @@ class MRGLogger(logging.Logger, object):
             aux_std_formatter = ColorFormatter(txt_format, TIME_FORMAT)
             # just to be sure, replace STD_VARIABLE with TXT_VARIABLE
             aux_format = txt_format.replace(STD_VARIABLE, TXT_VARIABLE)
+            # remove color formatting for txt output
+            aux_format = re.sub(r'\x1b\[[0-9;]+m', '', aux_format)
             aux_txt_formatter = logging.Formatter(aux_format, TIME_FORMAT)
             for handler in self.usm_handlers:
                 if not isinstance(handler, XmlHandler):
@@ -307,7 +310,9 @@ class MRGLogger(logging.Logger, object):
                     elif extra['tag'] == 'testid':
                         std_format = \
                             STD_FORMAT.replace(STD_VARIABLE, ' Test') + \
-                            ' result    : %s' % extra['attrs']['result']
+                            ' result    : ' + ColorFormatter.format_color(
+                                extra['attrs']['result'],
+                                COLORS[extra['attrs']['result']])
                     else:
                         std_format = STD_FORMAT.replace(STD_VARIABLE, "")
             else:
