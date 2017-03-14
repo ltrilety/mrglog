@@ -78,7 +78,9 @@ if sys.version_info < (2, 5):
 else:
     TIME_FORMAT_MS = TIME_FORMAT + ",%f"
 
-STD_VARIABLE = ' [ %(levelname)-18s ] %(name)s::'
+TXT_VARIABLE = ' [ %(levelname)-8s ] %(name)s::'
+TXT_FORMAT = '[%(asctime)s,%(msecs).03d]' + TXT_VARIABLE + ' %(message)s'
+STD_VARIABLE = ' [ %(levelname)-19s ] %(name)s::'
 STD_FORMAT = '[%(asctime)s,%(msecs).03d]' + STD_VARIABLE + ' %(message)s'
 XML_FORMAT = '%(message)s'
 XML_FORMATTER = logging.Formatter(XML_FORMAT)
@@ -145,7 +147,7 @@ class ColorFormatter(logging.Formatter):
         text = text + RESET_SEQ
         return text
 
-TXT_FORMATTER = logging.Formatter(STD_FORMAT, TIME_FORMAT)
+TXT_FORMATTER = logging.Formatter(TXT_FORMAT, TIME_FORMAT)
 STD_FORMATTER = ColorFormatter(STD_FORMAT, TIME_FORMAT)
 
 
@@ -242,16 +244,23 @@ class MRGLogger(logging.Logger, object):
         """ use different format """
         if self.usm_handlers:
             # set format
-            aux_std_formatter = logging.Formatter(txt_format, TIME_FORMAT)
+            original_formatters = {}
+            aux_std_formatter = ColorFormatter(txt_format, TIME_FORMAT)
+            # just to be sure, replace STD_VARIABLE with TXT_VARIABLE
+            aux_format = txt_format.replace(STD_VARIABLE, TXT_VARIABLE)
+            aux_txt_formatter = logging.Formatter(aux_format, TIME_FORMAT)
             for handler in self.usm_handlers:
                 if not isinstance(handler, XmlHandler):
-                    handler.setFormatter(aux_std_formatter)
+                    original_formatters[handler.name] = handler.formatter
+                    if isinstance(handler, logging.FileHandler):
+                        handler.setFormatter(aux_txt_formatter)
+                    else:
+                        handler.setFormatter(aux_std_formatter)
             logging.Logger.log(self, lvl, msg, *args, **kwargs)
             # put format back
             for handler in self.usm_handlers:
-                if not isinstance(handler, XmlHandler) and \
-                   not isinstance(handler, logging.FileHandler):
-                    handler.setFormatter(STD_FORMATTER)
+                if not isinstance(handler, XmlHandler):
+                    handler.setFormatter(original_formatters[handler.name])
 
     def log(self, lvl, msg, *args, **kwargs):
         """ log message """
@@ -669,6 +678,7 @@ class MRGLog(MRGLogger):
         NOTE: this handler has always log level set to DEBUG
         """
         xmlh = XmlHandler(xml_file)
+        xmlh.name = 'xml handler'
         xmlh.setFormatter(XML_FORMATTER)
         xmlh.setLevel(logging.DEBUG)
         self.addHandler(xmlh)
@@ -676,6 +686,7 @@ class MRGLog(MRGLogger):
     def setStdHandler(self, level=logging.INFO):
         """ prepare logging to stdout """
         stdh = logging.StreamHandler(sys.stdout)
+        stdh.name = 'std handler'
         stdh.setFormatter(STD_FORMATTER)
         stdh.setLevel(level)
         self.addHandler(stdh)
@@ -683,6 +694,7 @@ class MRGLog(MRGLogger):
     def setTextHandler(self, text_file, level=logging.INFO):
         """ prepare logging to txt file """
         texth = logging.FileHandler(text_file)
+        texth.name = 'txt handler'
         texth.setFormatter(TXT_FORMATTER)
         texth.setLevel(level)
         self.addHandler(texth)
