@@ -331,6 +331,13 @@ class MRGLogger(logging.Logger, object):
                             handlers.remove(handler)
                             self.usm_handlers = copy.copy(handlers)
                             handlers = aux_handlers
+            if 'color' in kwargs:
+                # color message if required
+                std_format = std_format.replace(
+                    '%(message)s',
+                    ColorFormatter.format_color('%(message)s',
+                                                kwargs['color']))
+                del kwargs['color']
             # log to txt outputs with different format - std_format
             self.__txt_format_log(std_format, lvl, msg, *args, **kwargs)
             # put back handlers
@@ -579,7 +586,9 @@ class MRGLog(MRGLogger):
                     len(self.tcms_tests[testid]['waived']),
                     len(self.tcms_tests[testid]['fail']),
                     self.tcms_tests[testid]['desc'],
-                    noxml=True)
+                    noxml=True,
+                    color=COLORS[self.tcms_tests[testid]['result']])
+
         if self.log_lvl < 2:
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
             self.log(LOG_LEVEL, 'List of known issues:', noxml=True)
