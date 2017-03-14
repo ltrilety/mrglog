@@ -6,7 +6,7 @@ TODO: create more usefull tests when some mrglog feature is updated.
 """
 
 
-import pytest
+# import pytest
 
 import mrglog
 
