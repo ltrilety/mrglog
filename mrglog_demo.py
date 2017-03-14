@@ -83,10 +83,10 @@ def test_it(logger, a_logger, b_logger):
 
 
 def reload_mrglog():
-  try:
-      importlib.reload(mrglog)
-  except AttributeError:
-      reload(mrglog)
+    try:
+        importlib.reload(mrglog)
+    except AttributeError:
+        reload(mrglog)
 
 print('----------------------------------------------------------------------')
 print('----------------------------------------------------------------------')
