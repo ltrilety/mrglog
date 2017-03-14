@@ -571,9 +571,7 @@ class MRGLog(MRGLogger):
                 _tcs_summary[self.tcms_tests[testid]['result']] += 1
                 self.log(
                     LOG_LEVEL,
-                    ColorFormatter.format_color(
-                        '%s %-40s:  #tests:%-4d  #fails:%-4d  desc.:"%s"',
-                        COLORS[self.tcms_tests[testid]['result']]),
+                    '%-5s %-40s:  #tests:%-4d  #fails:%-4d  desc.:"%s"',
                     self.tcms_tests[testid]['result'],
                     str(testid),
                     len(self.tcms_tests[testid]['pass']) +
@@ -600,37 +598,24 @@ class MRGLog(MRGLogger):
                 _result = "PASS"
             self.log(
                 LOG_LEVEL,
-                ColorFormatter.format_bold("Test-Cases Summary") +
-                "   #TOTAL: %s #PASSED: %s #FAILED: %s #ERRORS: %s",
-                ColorFormatter.format_bold("%-5s" % (len(self.tcms_tests))),
-                ColorFormatter.format_color("%-5s" % (
-                    _tcs_summary['PASS']), COLORS['PASS']),
-                ColorFormatter.format_color("%-5s" % (
-                    _tcs_summary['FAIL']), COLORS[_result]),
-                ColorFormatter.format_color("%s" % (
-                    _tcs_summary['ERROR']), COLORS[_result]),
+                "Test-Cases Summary   "
+                "#TOTAL: %-5s #PASSED: %-4s #FAILED: %-4s #ERRORS: %-3s",
+                len(self.tcms_tests),
+                _tcs_summary['PASS'],
+                _tcs_summary['FAIL'],
+                _tcs_summary['ERROR'],
                 noxml=True)
             self.log(
                 LOG_LEVEL,
-                ColorFormatter.format_bold("Test Summary") +
-                " : %s #TOTAl: %s #PASSED: %s #FAILED: %s"
-                " #ERRORS: %s #WAIVES: %s",
-                ColorFormatter.format_color("%-5s" % _result, COLORS[_result]),
-                ColorFormatter.format_bold("%-5s" % (
-                    self.fails +
-                    self.passes +
-                    self.waives)),
-                ColorFormatter.format_color(
-                    "%-5s" % (self.passes),
-                    COLORS['PASS']),
-                ColorFormatter.format_color(
-                    "%-5s" % (self.fails),
-                    COLORS[_result]),
-                ColorFormatter.format_color(
-                    "%-3s" % (self.errors),
-                    COLORS[_result]),
-                ColorFormatter.format_bold(
-                    "%s" % (self.waives)),
+                "Test Summary "
+                ": %-5s #TOTAl: %-5s #PASSED: %-4s #FAILED: %-4s "
+                "#ERRORS: %-3s #WAIVES: %-4s",
+                _result,
+                self.fails + self.passes + self.waives,
+                self.passes,
+                self.fails,
+                self.errors,
+                self.waives,
                 noxml=True)
             if IS_LINUX:
                 try:
