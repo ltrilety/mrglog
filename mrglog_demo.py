@@ -69,6 +69,7 @@ def test_it(logger, a_logger, b_logger):
     logger.waived('ignore 4')
     logger.passed('good 4')
     logger.rlLog('some log message', mrglog.LOG_LEVEL)
+    logger.log(mrglog.ERROR, 'some error message')
 
     a_logger.passed('good A4')
     b_logger.passed('good B4')
@@ -154,7 +155,7 @@ print('----------------------------------------------------------------------')
 
 reload_mrglog()
 
-logger = mrglog.USMLog.get_logger('my logger 3', output=['xml', 'txt'])
+logger = mrglog.USMLog.get_logger('my logger 3', output=['std', 'xml', 'txt'])
 
 a = A()
 b = B()
