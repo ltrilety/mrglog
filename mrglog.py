@@ -320,6 +320,12 @@ class MRGLogger(logging.Logger, object):
                 for handler in handlers:
                     if isinstance(handler, XmlHandler):
                         self.removeHandler(handler)
+                        if handler in self.usm_handlers:
+                            # workaround remove didn't work
+                            aux_handlers = copy.copy(self.usm_handlers)
+                            handlers.remove(handler)
+                            self.usm_handlers = copy.copy(handlers)
+                            handlers = aux_handlers
             # log to txt outputs with different format - std_format
             self.__txt_format_log(std_format, lvl, msg, *args, **kwargs)
             # put back handlers
