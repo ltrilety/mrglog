@@ -286,7 +286,7 @@ class MRGLogger(logging.Logger, object):
                             txtonly_handlers.append(handler)
                     if self.usm_handlers:
                         logging.Logger.log(self, lvl, msg, *args, **kwargs)
-                    # if phase beginning log starttime to txt handlers
+                    # put back handlers
                     self.usm_handlers = copy.copy(handlers)
                     return
                 else:
@@ -322,6 +322,7 @@ class MRGLogger(logging.Logger, object):
                         self.removeHandler(handler)
             # log to txt outputs with different format - std_format
             self.__txt_format_log(std_format, lvl, msg, *args, **kwargs)
+            # put back handlers
             self.usm_handlers = copy.copy(handlers)
         else:
             logging.Logger.log(self, lvl, msg, *args, **kwargs)
