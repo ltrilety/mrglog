@@ -536,7 +536,7 @@ class MRGLog(MRGLogger):
 
     def close(self):
         """ close instance """
-        if self.act_test["id"] != None:
+        if self.act_test["id"] is not None:
             # close TCMS if running
             self.closeTCMS()
         if not self.__module:
@@ -764,19 +764,19 @@ class MRGLog(MRGLogger):
             return
         if result == 0:
             self.test_results["pass"].append(message)
-            if self.act_test["id"] != None:
+            if self.act_test["id"] is not None:
                 self.act_test["pass"].append(message)
         elif result == 1:
             self.test_results["fails"].append(message)
-            if self.act_test["id"] != None:
+            if self.act_test["id"] is not None:
                 self.act_test["fail"].append(message)
         elif result == 3:
             self.test_results["waives"].append(message)
-            if self.act_test["id"] != None:
+            if self.act_test["id"] is not None:
                 self.act_test["waive"].append(message)
         elif result == 4:
             self.test_results["errors"].append(message)
-            if self.act_test["id"] != None:
+            if self.act_test["id"] is not None:
                 self.act_test["errors"].append(message)
 
     def passed(self, message, *args, **kwargs):
@@ -828,7 +828,7 @@ class MRGLog(MRGLogger):
               - by default it is printed (not to xml)
         desc - description of test
         """
-        if self.act_test["id"] != None:
+        if self.act_test["id"] is not None:
             # already running TCMS
             self.closeTCMS()
         if stat:
@@ -853,7 +853,7 @@ class MRGLog(MRGLogger):
         stat - if additional information should be printed
               - by default it is printed (not to xml)
         """
-        if self.act_test["id"] != None:
+        if self.act_test["id"] is not None:
             if stat:
                 if self.log_lvl < 1:
                     self.log(
@@ -897,7 +897,7 @@ class MRGLog(MRGLogger):
     testEnd = closeTCMS
 
     def addTestId(self, testid=None, result='FAIL'):
-        """ add reult of the test, for tcms parsing """
+        """ add result of the test, for tcms parsing """
         if testid is None:
             testid = self.act_test["id"]
         if testid in self.tcms_tests:
