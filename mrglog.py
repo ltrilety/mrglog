@@ -582,7 +582,7 @@ class MRGLog(MRGLogger):
             self.log(LOG_LEVEL, 'List of known issues:', noxml=True)
             self.log(LOG_LEVEL, '-' * LINE_LENGTH, noxml=True)
             for issue in USMLog.known_issues:
-                self.log(LOG_LEVEL, issue)
+                self.log(LOG_LEVEL, issue, noxml=True)
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
             self.log(LOG_LEVEL, '=' * LINE_LENGTH, noxml=True)
 
