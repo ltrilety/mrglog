@@ -327,10 +327,10 @@ class MRGLogger(logging.Logger, object):
                 for handler in handlers:
                     if isinstance(handler, XmlHandler):
                         if hasattr(self, 'parent') and self.parent:
-                          # remove the handler from main logger
-                          self.parent.removeHandler(handler)
+                            # remove the handler from main logger
+                            self.parent.removeHandler(handler)
                         else:
-                          self.removeHandler(handler)
+                            self.removeHandler(handler)
             if 'color' in kwargs:
                 # color message if required
                 std_format = std_format.replace(
