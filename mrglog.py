@@ -57,18 +57,24 @@ def passed(self, message, *args, **kws):
     """ log pass """
     # Yes, logger takes its '*args' as 'args'.
     self._log(PASS_LEVEL, message, args, **kws)  # pylint: disable=W0212
+
+
 logging.Logger.passed = passed
 
 
 def failed(self, message, *args, **kws):
     """ log fail """
     self._log(FAIL_LEVEL, message, args, **kws)  # pylint: disable=W0212
+
+
 logging.Logger.failed = failed
 
 
 def waived(self, message, *args, **kws):
     """ log waive """
     self._log(WAIVE_LEVEL, message, args, **kws)  # pylint: disable=W0212
+
+
 logging.Logger.waived = waived
 
 
@@ -147,6 +153,7 @@ class ColorFormatter(logging.Formatter):
         text = BOLD_SEQ + text
         text = text + RESET_SEQ
         return text
+
 
 TXT_FORMATTER = logging.Formatter(TXT_FORMAT, TIME_FORMAT)
 STD_FORMATTER = ColorFormatter(STD_FORMAT, TIME_FORMAT)
@@ -1085,6 +1092,7 @@ class USMLog(object):
             USMLog.__logger.disabled = False
         for module_logger in USMLog.__module_loggers:
             USMLog.__module_loggers[module_logger].disabled = False
+
 
 get_logger = USMLog.get_logger
 
