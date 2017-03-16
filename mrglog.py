@@ -282,11 +282,13 @@ class MRGLogger(logging.Logger, object):
                 # if beginning or ending tag log only xml
                 if extra['tag'] == 'log':
                     handlers = copy.copy(self.usm_handlers)
-                    txtonly_handlers = []
                     for handler in handlers:
                         if not isinstance(handler, XmlHandler):
-                            self.removeHandler(handler)
-                            txtonly_handlers.append(handler)
+                            if hasattr(self, 'parent') and self.parent:
+                                # remove the handler from main logger
+                                self.parent.removeHandler(handler)
+                            else:
+                                self.removeHandler(handler)
                     if self.usm_handlers:
                         logging.Logger.log(self, lvl, msg, *args, **kwargs)
                     # put back handlers
@@ -324,7 +326,11 @@ class MRGLogger(logging.Logger, object):
                 # remove xml handler
                 for handler in handlers:
                     if isinstance(handler, XmlHandler):
-                        self.removeHandler(handler)
+                        if hasattr(self, 'parent') and self.parent:
+                          # remove the handler from main logger
+                          self.parent.removeHandler(handler)
+                        else:
+                          self.removeHandler(handler)
             if 'color' in kwargs:
                 # color message if required
                 std_format = std_format.replace(
