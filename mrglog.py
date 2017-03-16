@@ -325,12 +325,6 @@ class MRGLogger(logging.Logger, object):
                 for handler in handlers:
                     if isinstance(handler, XmlHandler):
                         self.removeHandler(handler)
-                        if handler in self.usm_handlers:
-                            # workaround remove didn't work
-                            aux_handlers = copy.copy(self.usm_handlers)
-                            handlers.remove(handler)
-                            self.usm_handlers = copy.copy(handlers)
-                            handlers = aux_handlers
             if 'color' in kwargs:
                 # color message if required
                 std_format = std_format.replace(
